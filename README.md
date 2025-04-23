@@ -55,7 +55,6 @@ You can customize these in the provided HTML/CSS/JS files inside the `nui/` fold
 2. Move the resource into your FiveM `resources` folder.
 3. Add `ensure raptor` to your `server.cfg`.
 
-Optional: Customize UI by editing `ui.html`, `style.css`, and `script.js`. You can also replace the system icons.
 
 ---
 
@@ -85,7 +84,7 @@ Just set the `debug` flag to `true` in the config section.
 - [ ] Vehicle-specific tuning profiles
 - [ ] Sound effects for ESP/TCS/ABS triggers
 - [ ] In-game toggle system (command or hotkey)
-- [ ] Config.json support
+- [X] Config.json support
 - [ ] Log telemetry to file or UI overlay
 
 ---
@@ -104,11 +103,10 @@ Pull requests, issues, and suggestions are always welcome! Help bring realistic 
 
 ## 💬 Credits
 
-Made with 💡 and tire smoke by **[YourNameHere]**  
+Made with 💡 and tire smoke by **Azure** *Stoicly Developed*
 Inspired by real-world automotive dynamics & simulation theory.
 
 ---
 
 ## 📷 Screenshots
 
-_(Add your in-game screenshots or UI previews here)_
