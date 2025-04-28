@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vehicle Systems UI</title>
+  <style>
+    body { margin:0; padding:0; background:transparent; }
+    #indicator-container {
+      position: absolute;
+      display: flex;
+      z-index: 9999;
+    }
+    .indicator {
+      opacity: 0;
+      animation: none;
+    }
+    .indicator img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    @keyframes flashFade {
+      0%   { opacity:0; transform:scale(0.9); }
+      10%  { opacity:1; transform:scale(1); }
+      90%  { opacity:1; }
+      100% { opacity:0; transform:scale(0.9); }
+    }
+    .flash { animation: flashFade 2s ease-in-out; }
+  </style>
+</head>
+<body>
+
+  <!-- include before your main script -->
+  <script src="config.js"></script>
+
+  <div id="indicator-container">
+    <div id="tcs-icon" class="indicator"><img src="https://imgimp.xyz/images/Stoic-2025-04-22_22-52-52-68081dc4f24f4.png" alt="TCS" /></div>
+    <div id="abs-icon" class="indicator"><img src="https://imgimp.xyz/images/Stoic-2025-04-22_22-52-58-68081dca3bd45.png" alt="ABS" /></div>
+    <div id="esp-icon" class="indicator"><img src="https://imgimp.xyz/images/Stoic-2025-04-22_22-53-05-68081dd151bcb.png" alt="ESP" /></div>
+  </div>
+
+  <script>
+    // apply config
+    (function(){
+      const cfg = window.IndicatorConfig || {};
+      const cont = document.getElementById('indicator-container');
+      if (cfg.container) {
+        if (cfg.container.bottom) cont.style.bottom = cfg.container.bottom;
+        if (cfg.container.right)  cont.style.right  = cfg.container.right;
+        if (cfg.container.gap)    cont.style.gap    = cfg.container.gap;
+      }
+      if (cfg.indicator && cfg.indicator.size) {
+        document.querySelectorAll('.indicator').forEach(el => {
+          el.style.width  = cfg.indicator.size;
+          el.style.height = cfg.indicator.size;
+        });
+      }
+    })();
+
+    function flashIcon(id) {
+      const el = document.getElementById(id);
+      el.classList.remove('flash');
+      void el.offsetWidth;
+      el.classList.add('flash');
+    }
+
+    window.addEventListener('message', (e) => {
+      const d = e.data;
+      if (d.type==='tcs' && d.status) flashIcon('tcs-icon');
+      if (d.type==='abs' && d.status) flashIcon('abs-icon');
+      if (d.type==='esp' && d.status) flashIcon('esp-icon');
+    });
+  </script>
+
+</body>
+</html>
