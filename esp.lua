@@ -1,5 +1,3 @@
--- esp.lua — Vehicle Stability Control (ESP) with NUI UI integration and debugging
-
 -- NUI UI toggle for ESP icon
 local isESPUIActive = false
 local function ShowESPUI(status)
