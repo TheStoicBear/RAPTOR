@@ -10,14 +10,13 @@ end
 
 -- ESP enable flag
 local ESPEnabled = true
-RegisterCommand('+toggleESP', function()
+RegisterCommand('toggleESP', function()
     ESPEnabled = not ESPEnabled
     print(('ESP %s'):format(ESPEnabled and 'ENABLED' or 'DISABLED'))
     if not ESPEnabled then
         ShowESPUI(false)
     end
 end, false)
-RegisterKeyMapping('+toggleESP', 'Toggle ESP', 'keyboard', 'F7')
 
 -- Pulse braking toggle (optional)
 local PulseBrakeEnabled = true
