@@ -1,10 +1,11 @@
--- ABS v3.0 — Per‑Wheel Pulsing & Rear‑Bias
+-- ABS v3.0 — Per-Wheel Pulsing & Rear-Bias
+local ABSSystemEnabled    = true      -- overall on/off switch
 local isABSActive         = false
-local pulseInterval       = 50      -- ms between on/off pulses (~20 Hz)
+local pulseInterval       = 50        -- ms between on/off pulses (~20 Hz)
 local nextToggle          = 0
-local lockThreshold       = 0.15    -- slip ratio threshold
-local brakeInputThreshold = 0.5     -- when brake is “hard”
-local rearPressureRatio   = 0.7     -- rear wheels get 70% of front pressure
+local lockThreshold       = 0.15      -- slip ratio threshold
+local brakeInputThreshold = 0.5       -- when brake is “hard”
+local rearPressureRatio   = 0.7       -- rear wheels get 70% of front pressure
 local debug               = false
 
 local function debugPrint(msg)
@@ -13,9 +14,31 @@ local function debugPrint(msg)
     end
 end
 
+-- Register /toggleABS command
+RegisterCommand('toggleABS', function()
+    ABSSystemEnabled = not ABSSystemEnabled
+    print(('ABS System %s'):format(ABSSystemEnabled and 'ENABLED' or 'DISABLED'))
+
+    -- If disabling mid‐drive, restore full brake pressure & UI
+    if not ABSSystemEnabled and isABSActive then
+        local ped = PlayerPedId()
+        local veh = GetVehiclePedIsIn(ped, false)
+        for w = 0, GetVehicleNumberOfWheels(veh)-1 do
+            SetVehicleWheelBrakePressure(veh, w, 1.0)
+        end
+        SendNUIMessage({ type = "abs", status = false })
+        isABSActive = false
+    end
+end, false)
+
 CreateThread(function()
     while true do
-        Wait(0)  -- continuous
+        Wait(0)  -- continuous loop
+
+        if not ABSSystemEnabled then
+            -- ABS is globally off → do nothing
+            goto cont
+        end
 
         local ped = PlayerPedId()
         if not IsPedInAnyVehicle(ped, false) then
@@ -63,11 +86,10 @@ CreateThread(function()
                 local brakeOn = ((now // pulseInterval) % 2) == 0
                 for w = 0, GetVehicleNumberOfWheels(veh)-1 do
                     local target = brakeOn and 1.0 or 0.0
-                    -- bias rear wheels
                     if w >= 2 then
                         target = brakeOn and rearPressureRatio or 0.0
                     end
-                    SetVehicleWheelBrakePressure(veh, w, target) -- :contentReference[oaicite:0]{index=0}
+                    SetVehicleWheelBrakePressure(veh, w, target)
                 end
                 nextToggle = now + pulseInterval
                 debugPrint(("Brake %s"):format(brakeOn and "APPLY" or "RELEASE"))
@@ -87,4 +109,3 @@ CreateThread(function()
         ::cont::
     end
 end)
-
